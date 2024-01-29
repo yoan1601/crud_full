@@ -42,10 +42,13 @@ namespace crud_full.Controllers
                 return NotFound();
             }
 
+            Console.WriteLine(">>>>>>>>>>>> emp detail");
+
             return View(employe);
         }
 
         // GET: Employes/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -55,19 +58,20 @@ namespace crud_full.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("idemploye,nom,datenaissance")] Employe employe)
-        {
-            if (ModelState.IsValid)
-            {
+        public async Task<IActionResult> CreateNew(string nom, string datenaissance) {
+
+                Employe employe = new Employe();
+                employe.nom = nom;
+                employe.datenaissance = DateTime.SpecifyKind(DateTime.Parse(datenaissance), DateTimeKind.Utc);
                 _context.Add(employe);
+                Console.WriteLine(">>>>>>>>>>>> emp inserted");
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
-            return View(employe);
+
         }
 
         // GET: Employes/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Employe == null)
@@ -87,16 +91,13 @@ namespace crud_full.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("idemploye,nom,datenaissance")] Employe employe)
+        public async Task<IActionResult> EditYou(string idemploye, string nom, string datenaissance)
         {
-            if (id != employe.idemploye)
-            {
-                return NotFound();
-            }
+            Employe employe = new Employe();
+            employe.idemploye = int.Parse(idemploye);
+            employe.nom = nom;
+            employe.datenaissance = DateTime.SpecifyKind(DateTime.Parse(datenaissance), DateTimeKind.Utc);
 
-            if (ModelState.IsValid)
-            {
                 try
                 {
                     _context.Update(employe);
@@ -114,8 +115,7 @@ namespace crud_full.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
-            return View(employe);
+            
         }
 
         // GET: Employes/Delete/5
@@ -138,7 +138,6 @@ namespace crud_full.Controllers
 
         // POST: Employes/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Employe == null)
@@ -150,7 +149,8 @@ namespace crud_full.Controllers
             {
                 _context.Employe.Remove(employe);
             }
-            
+
+            Console.WriteLine(">>>>>>>>>>>> emp deleted");
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

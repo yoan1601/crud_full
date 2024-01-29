@@ -9,6 +9,6 @@ namespace crud_full.Models
         [Key]
         public int iddept { get; set; }
         public string nomdept { get; set; }
-        public List<Employe> employes { get; set; }
+
     }
 }

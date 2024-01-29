@@ -9,6 +9,7 @@ namespace crud_full.Models
         [Key]
         public int idemploye { get; set; }
         public string nom { get; set; }
+        [DataType(DataType.DateTime)]
         public DateTime datenaissance { get; set; }
 
         [ForeignKey("iddept")]
