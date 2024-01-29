@@ -1,0 +1,15 @@
+-- terminal
+dotnet add package Microsoft.EntityFrameworkCore --version 7.0.0
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 7.0.0
+
+-- package manager
+Install-Package Microsoft.EntityFrameworkCore.Tools -Version 7.0.0
+Install-Package Microsoft.EntityFrameworkCore.Design -Version 7.0.0
+Install-Package Npgsql.EntityFrameworkCore.PostgreSQL -Version 7.0.0
+
+-- creer models
+Scaffold-DbContext "Host=localhost;Database=crud_ef;Username=postgres;Password=root" Npgsql.EntityFrameworkCore.PostgreSQL -o Models
+
+-- creer controller 
+dotnet tool install --global dotnet-aspnet-codegenerator --version 7.0.0
+dotnet aspnet-codegenerator controller -name EmployeController -m Employe -dc CrudEfContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries
