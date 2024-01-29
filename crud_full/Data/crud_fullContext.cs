@@ -15,5 +15,6 @@ namespace crud_full.Data
         }
 
         public DbSet<crud_full.Models.Employe> Employe { get; set; } = default!;
+        public DbSet<crud_full.Models.Departement> Departement { get; set; } = default!;
     }
 }

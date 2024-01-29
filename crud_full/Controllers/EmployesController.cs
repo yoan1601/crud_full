@@ -23,7 +23,7 @@ namespace crud_full.Controllers
         public async Task<IActionResult> Index()
         {
               return _context.Employe != null ? 
-                          View(await _context.Employe.ToListAsync()) :
+                          View(await _context.Employe.Include(e => e.Departement).ToListAsync()) :
                           Problem("Entity set 'crud_fullContext.Employe'  is null.");
         }
 
@@ -36,6 +36,7 @@ namespace crud_full.Controllers
             }
 
             var employe = await _context.Employe
+                .Include(e => e.Departement)
                 .FirstOrDefaultAsync(m => m.idemploye == id);
             if (employe == null)
             {
@@ -43,6 +44,7 @@ namespace crud_full.Controllers
             }
 
             Console.WriteLine(">>>>>>>>>>>> emp detail");
+            ViewData["Employe"] = employe;
 
             return View(employe);
         }
@@ -51,6 +53,7 @@ namespace crud_full.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewData["Departement"] = new SelectList(_context.Set<Departement>(), "iddept", "nomdept");
             return View();
         }
 
@@ -58,11 +61,13 @@ namespace crud_full.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> CreateNew(string nom, string datenaissance) {
+        public async Task<IActionResult> CreateNew(string nom, string datenaissance, string Departement) {
 
                 Employe employe = new Employe();
                 employe.nom = nom;
                 employe.datenaissance = DateTime.SpecifyKind(DateTime.Parse(datenaissance), DateTimeKind.Utc);
+                employe.Departement = await _context.Departement
+                .FirstOrDefaultAsync(o => o.iddept == int.Parse(Departement));
                 _context.Add(employe);
                 Console.WriteLine(">>>>>>>>>>>> emp inserted");
                 await _context.SaveChangesAsync();
@@ -84,6 +89,7 @@ namespace crud_full.Controllers
             {
                 return NotFound();
             }
+            ViewData["Departement"] = new SelectList(_context.Set<Departement>(), "iddept", "nomdept");
             return View(employe);
         }
 
@@ -91,14 +97,15 @@ namespace crud_full.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> EditYou(string idemploye, string nom, string datenaissance)
+        public async Task<IActionResult> EditYou(string idemploye, string nom, string datenaissance, string Departement)
         {
             Employe employe = new Employe();
             employe.idemploye = int.Parse(idemploye);
             employe.nom = nom;
             employe.datenaissance = DateTime.SpecifyKind(DateTime.Parse(datenaissance), DateTimeKind.Utc);
-
-                try
+            employe.Departement = await _context.Departement
+                .FirstOrDefaultAsync(o => o.iddept == int.Parse(Departement));
+            try
                 {
                     _context.Update(employe);
                     await _context.SaveChangesAsync();
